@@ -13,3 +13,10 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+#ide
+.idea
+.vscode
+
+#tilt
+tilt_extensions
