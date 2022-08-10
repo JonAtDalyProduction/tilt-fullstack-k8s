@@ -18,11 +18,15 @@ helm_remote('traefik',
             )
 
 # expose traefik dashboard and setup ingress rules
-k8s_yaml('k8s/traefik-ingress.yaml')
+# setup redis db for backend sessions
+k8s_yaml(['k8s/traefik-ingress.yaml','k8s/redis-cache.yaml','k8s/mongo-db.yaml', 'k8s/nats-broker.yaml'])
 k8s_resource(
-  objects=['app-api-ingress:IngressRoute:default'],
+  objects=['app-api-ingress:IngressRoute:default','traefik-dashboard-ingress:IngressRoute:default','app-frontend-ingress:IngressRoute:default' ],
   new_name='traefik-ingress'
 )
+k8s_resource(workload='redis-cache', port_forwards=6379)
+k8s_resource(workload='mongo-db', port_forwards=27017)
+k8s_resource(workload='nats-broker', port_forwards=8222)
 # kubectl port-forward $(kubectl get pods --selector "app.kubernetes.io/name=traefik" --output=name) 9000:9000
 # helm_remote(chart,
 # repo_url='',
